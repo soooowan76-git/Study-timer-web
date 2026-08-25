@@ -4,34 +4,104 @@
     <meta charset="UTF-8">
     <title>Smart Study Timer</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding-top: 50px; background: #f0f2f2; }
-        .card { background: white; padding: 30px; border-radius: 10px; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        body { font-family: sans-serif; text-align: center; padding-top: 30px; background: #f0f2f2; }
+        .card { background: white; padding: 30px; border-radius: 10px; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 10px; vertical-align: top;}
         #timer { font-size: 48px; font-weight: bold; margin: 20px 0; color: #2563eb; }
-        button { padding: 10px 20px; font-size: 16px; margin: 5px; border: none; border-radius: 6px; cursor: pointer; }
+        select { padding: 5px; font-size: 16px; border-radius: 4px; }
+        button { padding: 10px 20px; font-size: 16px; margin: 5px; border: none; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
+        button:hover { filter: brightness(0.9); }
         .btn-start { background: #16a34a; color: white; }
         .btn-stop { background: #dc2626; color: white; }
+        .btn-download { background: #3b82f6; color: white; margin-top: 20px; display: block; width: 100%; box-sizing: border-box; }
+        .btn-reset { background: #6b7280; color: white; margin-top: 5px; display: block; width: 100%; box-sizing: border-box; }
     </style>
-</head>
+    <!-- Chart.js 라이브러리 불러오기 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>  
 <body>
     
-
+    <!-- 왼쪽 카드: 타이머 조작 영역 -->
     <div class="card">
         <h2>⏱️ 스마트 공부 타이머</h2>
         <select id="subject">
-            <option value="수학">수학</option>
-            <option value="영어">영어</option>
-            <option value="과학">과학</option>
-            <option value="사회">사회</option>
-            <option value="프로그래밍">프로그래밍</option>
+            <option value="math">수학</option>
+            <option value="english">영어</option>
+            <option value="science">과학</option>
+            <option value="history">역사</option>
+            <option value="programming">프로그래밍</option>
         </select>
 
         <div id="timer">00:00:00</div>
 
         <button class="btn-start" onclick="startTimer()">시작</button>
         <button class="btn-stop" onclick="stopTimer()">멈춤 & 저장</button>
+
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+        
+        <button class="btn-download" onclick="downloadRecord()">💾 오늘 기록 다운로드 (.txt)</button>
+        <button class="btn-reset" onclick="resetData()">🔄 오늘 기록 초기화</button>
+    </div>
+
+    <!-- 오른쪽 카드: 통계 그래프 영역 -->
+    <div class="statistics-container card">
+        <h3>과목별 공부 시간 통계 (분)</h3>
+        <div style="width: 350px; height: 350px; margin: auto;">
+            <canvas id="studyChart"></canvas>
+        </div>
     </div>
 
     <script>
+        // ==========================================
+        // 1. 데이터 초기화 및 로컬스토리지 불러오기
+        // ==========================================
+        let studyData = { math: 0, english: 0, science: 0, history: 0, programming: 0 };
+        const savedData = localStorage.getItem('myStudyRecord');
+        
+        if (savedData !== null) {
+            studyData = JSON.parse(savedData); 
+        }
+
+        // ==========================================
+        // 2. Chart.js 차트 생성 및 설정
+        // ==========================================
+        const ctx = document.getElementById('studyChart').getContext('2d');
+        let studyChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['수학', '영어', '과학', '역사', '프로그래밍'],
+                datasets: [{
+                    label: '공부 시간 (분)',
+                    data: [ studyData.math, studyData.english, studyData.science, studyData.history, studyData.programming ],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)', 'rgba(54, 162, 235, 0.7)', 
+                        'rgba(255, 206, 86, 0.7)', 'rgba(75, 192, 192, 0.7)', 'rgba(153, 102, 255, 0.7)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+        });
+
+        // ==========================================
+        // 3. 차트 업데이트 및 데이터 저장 함수
+        // ==========================================
+        function updateChart(subject, minutesAdded) {
+            studyData[subject] += minutesAdded;
+            
+            // 차트 데이터 갱신
+            studyChart.data.datasets[0].data = [
+                studyData.math, studyData.english, studyData.science, 
+                studyData.history, studyData.programming
+            ];
+            studyChart.update();
+            
+            // 로컬스토리지에 저장
+            localStorage.setItem('myStudyRecord', JSON.stringify(studyData));
+        }
+
+        // ==========================================
+        // 4. 타이머 기능
+        // ==========================================
         let seconds = 0;
         let timer = null;
         let startTime = 0;
@@ -52,17 +122,73 @@
             }, 1000);
         }
 
-
         function stopTimer() {
             if (!timer && seconds === 0) return;
             clearInterval(timer);
             timer = null;
+            
             const subject = document.getElementById('subject').value;
-            alert(`[${subject}] ${seconds} 초 공부를 끝냈어! (백엔드 전송 대기중...)`);
+            const minutes = Math.floor(seconds / 60); 
+            
+            // 💡 팁: 빨리 차트 변화를 보고 싶다면 위 코드를 지우고 아래 코드를 주석 해제하세요.
+            // const minutes = seconds; // (테스트용: 초 단위로 차트가 증가함)
+            
+            alert(`[${subject}] ${seconds}초 (${minutes}분) 공부를 끝냈어!`);
+            
+            updateChart(subject, minutes);
+            
             seconds = 0;
             updateDisplay();
         }
 
+        // ==========================================
+        // 5. 텍스트 파일 다운로드 기능
+        // ==========================================
+        function downloadRecord() {
+            const date = new Date();
+            const todayString = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+            
+            let textContent = `========== ${todayString} 공부 기록 ==========\n\n`;
+            textContent += `📐 수학: ${studyData.math}분\n`;
+            textContent += `🔤 영어: ${studyData.english}분\n`;
+            textContent += `🔬 과학: ${studyData.science}분\n`;
+            textContent += `🏛️ 역사: ${studyData.history}분\n`;
+            textContent += `💻 프로그래밍: ${studyData.programming}분\n\n`;
+            
+            const totalMinutes = studyData.math + studyData.english + studyData.science + studyData.history + studyData.programming;
+            textContent += `==========================================\n`;
+            textContent += `🔥 총 공부 시간: ${totalMinutes}분\n`;
+            textContent += `수고하셨습니다! 내일도 화이팅!`;
+
+            const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+            const fileUrl = URL.createObjectURL(blob);
+            
+            const tempLink = document.createElement('a');
+            tempLink.href = fileUrl;
+            tempLink.download = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}_공부기록.txt`; 
+            
+            document.body.appendChild(tempLink);
+            tempLink.click();
+            document.body.removeChild(tempLink);
+            URL.revokeObjectURL(fileUrl);
+        }
+
+        // ==========================================
+        // 6. 데이터 초기화 (리셋) 기능
+        // ==========================================
+        function resetData() {
+            const isSure = confirm("정말 오늘의 공부 기록을 모두 0으로 초기화할까요?\n(필요하다면 먼저 백업 다운로드를 진행해 주세요!)");
+            
+            if (isSure) {
+                localStorage.removeItem('myStudyRecord');
+                studyData = { math: 0, english: 0, science: 0, history: 0, programming: 0 };
+                
+                studyChart.data.datasets[0].data = [0, 0, 0, 0, 0];
+                studyChart.update();
+                
+                alert("기록이 초기화되었습니다. 새로운 하루도 화이팅! 🚀");
+            }
+        }
     </script>
 </body>
 </html>
