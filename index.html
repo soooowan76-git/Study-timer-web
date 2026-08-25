@@ -44,13 +44,16 @@
 
         function startTimer() {
             if (timer) return;
+            startTime = Date.now() - (seconds * 1000);
             timer = setInterval(() => {
-                seconds++;
+                seconds = Math.floor((Date.now() - startTime) / 1000);
                 updateDisplay();
             }, 1000);
         }
 
+
         function stopTimer() {
+            if (!timer && seconds === 0) return;
             clearInterval(timer);
             timer = null;
             const subject = document.getElementById('subject').value;
@@ -58,6 +61,7 @@
             seconds = 0;
             updateDisplay();
         }
+
     </script>
 </body>
 </html>
