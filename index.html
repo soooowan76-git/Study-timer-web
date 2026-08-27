@@ -218,13 +218,6 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
             min-width: 280px;
         }
-        
-        /* 타이머 스타일 */
-        #timer { font-size: 44px; font-weight: bold; margin: 20px 0; color: #2563eb; }
-        select { padding: 8px 12px; font-size: 15px; border-radius: 6px; border: 1px solid #ccc; }
-        button { padding: 10px 18px; font-size: 15px; margin: 5px; border: none; border-radius: 6px; cursor: pointer; }
-        .btn-start { background: #16a34a; color: white; }
-        .btn-stop { background: #dc2626; color: white; }
 
         /* 달력 스타일 */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold; }
@@ -237,24 +230,6 @@
     </style>
 </head>
 <body>
-
-    <div class="wrapper">
-        <!-- 타이머 카드 -->
-        <div class="card">
-            <h2>⏱️ Smart Study Timer</h2>
-            <select id="subject">
-                <option value="math">math</option>
-                <option value="english">english</option>
-                <option value="science">science</option>
-                <option value="history">history</option>
-                <option value="programming">programming</option>
-            </select>
-
-            <div id="timer">00:00:00</div>
-
-            <button class="btn-start" onclick="startTimer()">start</button>
-            <button class="btn-stop" onclick="stopTimer()">stop & save</button>
-        </div>
 
         <!-- 달력 카드 -->
         <div class="calendar">
