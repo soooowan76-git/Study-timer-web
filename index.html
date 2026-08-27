@@ -192,3 +192,127 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Study Timer & Calendar</title>
+    <style>
+        body { 
+            font-family: sans-serif; 
+            text-align: center; 
+            padding-top: 40px; 
+            background: #f0f2f2; 
+        }
+        .wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .card, .calendar { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+            min-width: 280px;
+        }
+        
+        /* 타이머 스타일 */
+        #timer { font-size: 44px; font-weight: bold; margin: 20px 0; color: #2563eb; }
+        select { padding: 8px 12px; font-size: 15px; border-radius: 6px; border: 1px solid #ccc; }
+        button { padding: 10px 18px; font-size: 15px; margin: 5px; border: none; border-radius: 6px; cursor: pointer; }
+        .btn-start { background: #16a34a; color: white; }
+        .btn-stop { background: #dc2626; color: white; }
+
+        /* 달력 스타일 */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold; }
+        .header button { padding: 5px 10px; margin: 0; background: #e2e8f0; border-radius: 4px; }
+        .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); font-weight: bold; color: #64748b; margin-bottom: 10px; }
+        .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; font-size: 14px; }
+        .days div { padding: 8px 0; border-radius: 4px; }
+        .days div:hover { background-color: #f1f5f9; cursor: pointer; }
+        .other-month { color: #cbd5e1; }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        <!-- 타이머 카드 -->
+        <div class="card">
+            <h2>⏱️ Smart Study Timer</h2>
+            <select id="subject">
+                <option value="math">math</option>
+                <option value="english">english</option>
+                <option value="science">science</option>
+                <option value="history">history</option>
+                <option value="programming">programming</option>
+            </select>
+
+            <div id="timer">00:00:00</div>
+
+            <button class="btn-start" onclick="startTimer()">start</button>
+            <button class="btn-stop" onclick="stopTimer()">stop & save</button>
+        </div>
+
+        <!-- 달력 카드 -->
+        <div class="calendar">
+            <div class="header">
+                <button class="prev">&lt;</button>
+                <div class="month-title">2026년 8월</div>
+                <button class="next">&gt;</button>
+            </div>
+            <div class="weekdays">
+                <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
+            </div>
+            <div class="days">
+                <div class="other-month">26</div>
+                <div class="other-month">27</div>
+                <div class="other-month">28</div>
+                <div class="other-month">29</div>
+                <div class="other-month">30</div>
+                <div class="other-month">31</div>
+                <div>1</div>
+                <div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div>
+                <div>9</div><div>10</div><div>11</div><div>12</div><div>13</div><div>14</div><div>15</div>
+                <div>16</div><div>17</div><div>18</div><div>19</div><div>20</div><div>21</div><div>22</div>
+                <div>23</div><div>24</div><div>25</div><div>26</div><div>27</div><div>28</div><div>29</div>
+                <div>30</div><div>31</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let seconds = 0;
+        let timer = null;
+        let startTime = 0;
+
+        function updateDisplay() {
+            let h = String(Math.floor(seconds / 3600)).padStart(2, '0');
+            let m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+            let s = String(seconds % 60).padStart(2, '0');
+            document.getElementById('timer').innerText = `${h}:${m}:${s}`;
+        }
+
+        function startTimer() {
+            if (timer) return;
+            startTime = Date.now() - (seconds * 1000);
+            timer = setInterval(() => {
+                seconds = Math.floor((Date.now() - startTime) / 1000);
+                updateDisplay();
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (!timer && seconds === 0) return;
+            clearInterval(timer);
+            timer = null;
+            const subject = document.getElementById('subject').value;
+            alert(`[${subject}] ${seconds} seconds study complete! (Waiting for backend transmission)`);
+            seconds = 0;
+            updateDisplay();
+        }
+    </script>
+</body>
+</html>
