@@ -34,7 +34,7 @@
         .btn-download { background: #3b82f6; color: white; margin-top: 20px; }
         .btn-reset { background: #6b7280; color: white; margin-top: 5px; }
         
-        /* 📊 차트 영역 크기 고정 */
+        /*  차트 영역 크기 고정 */
         .chart-box { 
             position: relative; 
             width: 100%; 
@@ -42,7 +42,7 @@
             margin-top: 15px; 
         }
 
-        /* 📅 날짜별 기록 리스트 스타일 */
+        /*  날짜별 기록 리스트 스타일 */
         #history-list {
             list-style: none;
             padding: 0;
@@ -68,7 +68,7 @@
     
     <!-- 왼쪽 카드: 타이머 조작 영역 -->
     <div class="card">
-        <h2>⏱️ 스마트 공부 타이머</h2>
+        <h2>⏱ 스마트 공부 타이머</h2>
         <select id="subject">
             <option value="math">수학</option>
             <option value="english">영어</option>
@@ -84,8 +84,8 @@
 
         <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
         
-        <button class="btn-download" onclick="downloadRecord()">💾 오늘 기록 다운로드 (.txt)</button>
-        <button class="btn-reset" onclick="resetData()">🔄 오늘 기록 초기화</button>
+        <button class="btn-download" onclick="downloadRecord()"> 오늘 기록 다운로드 (.txt)</button>
+        <button class="btn-reset" onclick="resetData()"> 오늘 기록 초기화</button>
     </div>
 
     <!-- 오른쪽 영역 (통계 + 날짜별 기록) -->
@@ -98,9 +98,9 @@
             </div>
         </div>
 
-        <!-- 📅 날짜별 공부 기록 카드 (선생님 피드백 반영!) -->
+        <!--  날짜별 공부 기록 카드 (선생님 피드백 반영!) -->
         <div class="card">
-            <h3>📅 날짜별 공부 기록 캘린더</h3>
+            <h3> 날짜별 공부 기록 캘린더</h3>
             <ul id="history-list">
                 <!-- 자바스크립트로 날짜별 기록이 여기에 동적으로 꽂힙니다 -->
             </ul>
@@ -250,15 +250,15 @@
             const todayString = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
             
             let textContent = `========== ${todayString} 공부 기록 ==========\n\n`;
-            textContent += `📐 수학: ${studyData.math}분\n`;
-            textContent += `🔤 영어: ${studyData.english}분\n`;
-            textContent += `🔬 과학: ${studyData.science}분\n`;
-            textContent += `🏛️ 역사: ${studyData.history}분\n`;
-            textContent += `💻 프로그래밍: ${studyData.programming}분\n\n`;
+            textContent += ` 수학: ${studyData.math}분\n`;
+            textContent += ` 영어: ${studyData.english}분\n`;
+            textContent += ` 과학: ${studyData.science}분\n`;
+            textContent += ` 역사: ${studyData.history}분\n`;
+            textContent += ` 프로그래밍: ${studyData.programming}분\n\n`;
             
             const totalMinutes = studyData.math + studyData.english + studyData.science + studyData.history + studyData.programming;
             textContent += `==========================================\n`;
-            textContent += `🔥 총 공부 시간: ${totalMinutes}분\n`;
+            textContent += ` 총 공부 시간: ${totalMinutes}분\n`;
             textContent += `수고하셨습니다! 내일도 화이팅!`;
 
             const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
@@ -288,7 +288,7 @@
                 studyChart.update();
                 renderHistoryList();
                 
-                alert("오늘의 기록이 초기화되었습니다. 화이팅! 🚀");
+                alert("오늘의 기록이 초기화되었습니다. 화이팅! ");
             }
         }
     </script>
